@@ -69,6 +69,26 @@ func (c Client) DeviceSerialList() (serials []string, err error) {
 	return
 }
 
+func (c Client) DeviceSerialMap() (serialMap map[string]string, err error) {
+	var resp string
+	if resp, err = c.executeCommand("host:devices"); err != nil {
+		return
+	}
+
+	lines := strings.Split(resp, "\n")
+	serialMap = make(map[string]string)
+
+	for i := range lines {
+		fields := strings.Fields(lines[i])
+		if len(fields) < 2 {
+			continue
+		}
+		serialMap[fields[0]] = fields[1]
+	}
+
+	return
+}
+
 func (c Client) DeviceList() (devices []Device, err error) {
 	var resp string
 	if resp, err = c.executeCommand("host:devices-l"); err != nil {
